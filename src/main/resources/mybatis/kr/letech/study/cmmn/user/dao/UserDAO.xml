@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.letech.study.cmmn.user.dao.UserDAO">
+	<select id="selectUserList" resultType="kr.letech.study.cmmn.user.vo.UserVO">
+		/* kr.letech.study.cmmn.user.dao.UserDAO.selectUserList */
+		SELECT USER_ID		AS userId
+		  	 , USER_NM      AS userNm
+	  	  FROM TB_USER
+	  	 WHERE DEL_YN = 'N'
+	</select>
+
+	<select id="selectUserDetail" resultType="kr.letech.study.cmmn.user.vo.UserVO">
+		/* kr.letech.study.cmmn.user.dao.UserDAO.selectUserDetail */
+		SELECT USER_ID										AS userId
+		  	 , USER_NM										AS userNm
+		  	 , RGST_ID										AS rgstId
+		   	 , DATE_FORMAT(RGST_DT, '%Y-%m-%d %H:%i:%s')	AS rgstDt
+		   	 , UPDT_ID										AS updtId
+		   	 , DATE_FORMAT(UPDT_DT , '%Y-%m-%d %H:%i:%S' )	AS updtDt
+	  	  FROM TB_USER
+	  	 WHERE USER_ID = #{userId}
+	  	   AND DEL_YN = 'N'
+	</select>
+
+	<insert id="insertUser">
+		/* kr.letech.study.cmmn.user.dao.UserDAO.insertUser */
+		INSERT INTO TB_USER
+		     (
+		       USER_ID
+			 , USER_PW
+			 , USER_NM
+			 , RGST_ID
+			 , RGST_DT
+			 , UPDT_ID
+			 , UPDT_DT
+			 , DEL_YN
+		     )
+		       VALUES
+		     (
+		       #{userId}
+			 , #{userPw}
+			 , #{userNm}
+			 , #{rgstId}
+			 , NOW()
+			 , #{updtId}
+			 , NOW()
+			 , 'N'
+		     )
+	</insert>
+
+	<insert id="insertUpload">
+		/* kr.letech.study.cmmn.user.dao.UserDAO.insertUser */
+		<selectKey order="BEFORE" keyProperty="fileNo"
+				resultType="int">
+			SELECT IFNULL(MAX(FILE_NO) ,0)+1
+    		  FROM TB_CMMN_FILE
+		</selectKey>
+		INSERT INTO TB_USER
+		     (
+		       FILE_GRP_ID
+			 , FILE_NO
+			 , ORGN_FILE_NM
+			 , CONV_FILE_NM
+			 , FILE_SIZE
+			 , FILE_DIV
+			 , RGST_ID
+			 , RGST_DT
+			 , UPDT_ID
+			 , UPDT_DT
+			 , DEL_YN
+		     )
+		       VALUES
+		     (
+		       #{fileGrpId}
+			 , #{fileNo}
+			 , #{orgnFileNm}
+			 , #{convFileNm}
+			 , #{fileSize}
+			 , #{fileDiv}
+			 , #{rgstId}
+			 , NOW()
+			 , #{updtId}
+			 , NOW()
+			 , 'N'
+		     )
+	</insert>
+
+	<update id="updateUser">
+		/* kr.letech.study.cmmn.user.dao.UserDAO.updateUser */
+		UPDATE TB_USER
+		   SET USER_NM = #{userNm}
+		     , USER_PW = #{userPw}
+		     , UPDT_ID = #{updtId}
+			 , UPDT_DT = NOW()
+		 WHERE USER_ID = #{userId}
+	</update>
+
+	<update id="deleteUser">
+		/* kr.letech.study.cmmn.user.dao.UserDAO.deleteUser */
+		UPDATE TB_USER
+		   SET DEL_YN  = 'Y'
+		     , UPDT_ID = #{updtId}
+			 , UPDT_DT = NOW()
+		 WHERE USER_ID = #{userId}
+	</update>
+</mapper>
