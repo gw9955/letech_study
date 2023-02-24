@@ -44,6 +44,18 @@
 						<th>수정일시</th>
 						<td><c:out value="${userDetail.updtDt}" /></td>
 					</tr>
+					<tr>
+						<th>서버에 업로드된 파일 이름</th>
+						<td><c:out value="${userDetail.convFileNm}" /></td>
+					</tr>
+					<tr>
+						<th>유저가 업로드한 파일 이름</th>
+						<td><c:out value="${userDetail.orgnFileNm}" /></td>
+					</tr>
+					<tr>
+						<th>파일 크기</th>
+						<td><c:out value="${userDetail.fileSize}" /></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
@@ -51,8 +63,8 @@
 	<form action="/cmmn/user/userDelete.do" method="post">
 		<input type="hidden" name="userId" value="${userDetail.userId}" />
 	<button type="submit" id="deleteUserBtn">삭제</button>
-	</form>
 	<button type="button" id="updateUserBtn">수정</button>
+	</form>
 </body>
 <script type="text/javascript">
 	// 사용자 수정 패이지

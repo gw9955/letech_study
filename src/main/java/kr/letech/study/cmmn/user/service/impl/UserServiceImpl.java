@@ -45,25 +45,23 @@ public class UserServiceImpl implements UserService {
 	// 사용자 상세
 	@Override
 	public UserVO selectUserDetail(String userId) {
-		return this.userDAO.selectUserDetail(userId);
+
+		UserVO user = this.userDAO.selectUserDetail(userId);
+		List<FileVO> fileList = this.userDAO.selectUserFileList(userId);
+		user.setFileVOList(fileList);
+		return user;
 	}
 
 	// 사용자 등록
 	@Override
-	public int insertUser(UserVO userVO) {
+	public int insertUser(UserVO userVO) throws IOException {
 		String userPw = userVO.getUserPw();
 		String convUserPw = this.passwordEncoder.encode(userPw);
 		userVO.setUserPw(convUserPw);
 
-		return this.userDAO.insertUser(userVO);
-	}
-
-	// 첨부파일 등록
-	@Override
-	public int insertUpload(UserVO userVO) throws IOException {
-
 		OutputStream out = null;
 		MultipartFile[] files = userVO.getFiles();
+		String fileGrpId = UUID.randomUUID().toString();
 
 		for (MultipartFile file : files) {
 
@@ -77,7 +75,6 @@ public class UserServiceImpl implements UserService {
 				}
 
 				String convFileNm = UUID.randomUUID().toString();
-				String fileGrpId = UUID.randomUUID().toString();
 
 				String filePath = saveDir + convFileNm;
 
@@ -86,13 +83,17 @@ public class UserServiceImpl implements UserService {
 				IOUtils.copy(in, out);
 
 				FileVO fileVO = new FileVO(); // UserFileVO 객체 생성
+				userVO.setPhtFileGrpId(fileGrpId);
 				fileVO.setFileGrpId(fileGrpId);
 				fileVO.setConvFileNm(convFileNm);
 				fileVO.setOrgnFileNm(file.getOriginalFilename());
 				fileVO.setFileSize(file.getSize());
-				fileVO.setFileDiv(file.getContentType());
+				//				fileVO.setFileDiv(file.get);
+				userVO.getFileVOList().add(fileVO); // UserVO의 List에 UserFileVO 추가
 
 				log.debug(fileVO.toString());
+
+				this.userDAO.insertUpload(fileVO);
 
 			} catch (FileNotFoundException e) {
 				throw e;
@@ -103,17 +104,17 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 
-		return this.userDAO.insertUpload(fileVO);
+		return this.userDAO.insertUser(userVO);
 	}
 
 	// 사용자 수정
-	@Override
-	public int updateUser(UserVO userVO) {
-		String userPw = userVO.getUserPw();
-		String convUserPw = this.passwordEncoder.encode(userPw);
-		userVO.setUserPw(convUserPw);
-		return this.userDAO.updateUser(userVO);
-	}
+	//	@Override
+	//	public int updateUser(UserVO userVO) {
+	//		String userPw = userVO.getUserPw();
+	//		String convUserPw = this.passwordEncoder.encode(userPw);
+	//		userVO.setUserPw(convUserPw);
+	//		return this.userDAO.updateUser(userVO);
+	//	}
 
 	// 사용자 삭제
 	@Override

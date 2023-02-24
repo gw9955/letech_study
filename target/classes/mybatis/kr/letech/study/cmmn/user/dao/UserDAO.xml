@@ -12,15 +12,27 @@
 
 	<select id="selectUserDetail" resultType="kr.letech.study.cmmn.user.vo.UserVO">
 		/* kr.letech.study.cmmn.user.dao.UserDAO.selectUserDetail */
-		SELECT USER_ID										AS userId
-		  	 , USER_NM										AS userNm
-		  	 , RGST_ID										AS rgstId
-		   	 , DATE_FORMAT(RGST_DT, '%Y-%m-%d %H:%i:%s')	AS rgstDt
-		   	 , UPDT_ID										AS updtId
-		   	 , DATE_FORMAT(UPDT_DT , '%Y-%m-%d %H:%i:%S' )	AS updtDt
-	  	  FROM TB_USER
-	  	 WHERE USER_ID = #{userId}
-	  	   AND DEL_YN = 'N'
+		SELECT A.USER_ID													AS userId
+		 	 , A.USER_NM													AS userNm
+		 	 , A.RGST_ID													AS rgstId
+			 , DATE_FORMAT(A.RGST_DT, '%Y-%m-%d %H:%i:%s')					AS rgstDt
+		  	 , A.UPDT_ID													AS updtId
+		  	 , DATE_FORMAT(A.UPDT_DT , '%Y-%m-%d %H:%i:%S' )				AS updtDt
+		  FROM TB_USER A
+		 WHERE A.USER_ID = #{userId}
+		   AND A.DEL_YN = 'N'
+	</select>
+
+	<select id="selectUserFileList" resultType="kr.letech.study.cmmn.user.vo.FileVO">
+	    /* kr.letech.study.cmmn.user.dao.UserDAO.selectUserFileList */
+	    SELECT FILE_GRP_ID												AS fileGrpId
+		     , ORGN_FILE_NM												AS orgnFileNm
+		     , CONV_FILE_NM												AS convFileNm
+		     , FILE_SIZE													AS fileSize
+		  FROM TB_CMMN_FILE A
+		 INNER JOIN TB_USER B
+		    ON A.FILE_GRP_ID = B.PHT_FILE_GRP_ID
+		 WHERE B.USER_ID = #{userId}
 	</select>
 
 	<insert id="insertUser">
@@ -30,6 +42,7 @@
 		       USER_ID
 			 , USER_PW
 			 , USER_NM
+			 , PHT_FILE_GRP_ID
 			 , RGST_ID
 			 , RGST_DT
 			 , UPDT_ID
@@ -41,6 +54,7 @@
 		       #{userId}
 			 , #{userPw}
 			 , #{userNm}
+			 , #{phtFileGrpId}
 			 , #{rgstId}
 			 , NOW()
 			 , #{updtId}
@@ -56,7 +70,7 @@
 			SELECT IFNULL(MAX(FILE_NO) ,0)+1
     		  FROM TB_CMMN_FILE
 		</selectKey>
-		INSERT INTO TB_USER
+		INSERT INTO TB_CMMN_FILE
 		     (
 		       FILE_GRP_ID
 			 , FILE_NO

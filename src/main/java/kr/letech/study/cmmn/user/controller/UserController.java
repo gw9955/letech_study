@@ -60,38 +60,32 @@ public class UserController {
 			log.info("실패!!");
 		}
 
-		int userFileVOResult = this.userService.insertUpload(userVO);
-
-		if (userFileVOResult == 0) {
-			log.info("실패했슴둥!");
-		}
-
 		return "redirect:/cmmn/user/userDetail.do?userId=" + userVO.getUserId();
 	}
 
 	// 사용자 수정 페이지
-	@GetMapping("/cmmn/user/userUpdateForm.do")
-	public String updateUserForm(Model model, String userId) {
-
-		UserVO userDetail = this.userService.selectUserDetail(userId);
-
-		model.addAttribute("userDetail", userDetail);
-
-		return "cmmn/user/userUpdateForm.tiles";
-	}
+	//	@GetMapping("/cmmn/user/userUpdateForm.do")
+	//	public String updateUserForm(Model model, String userId) {
+	//
+	//		UserVO userDetail = this.userService.selectUserDetail(userId);
+	//
+	//		model.addAttribute("userDetail", userDetail);
+	//
+	//		return "cmmn/user/userUpdateForm.tiles";
+	//	}
 
 	// 사용자 수정
-	@PostMapping("/cmmn/user/userUpdate.do")
-	public String updateUser(Model model, UserVO userVO) {
-
-		int cnt = this.userService.updateUser(userVO);
-
-		if (cnt == 0) {
-			log.info("실패!!");
-		}
-
-		return "redirect:/cmmn/user/userDetail.do?userId=" + userVO.getUserId();
-	}
+	//	@PostMapping("/cmmn/user/userUpdate.do")
+	//	public String updateUser(Model model, UserVO userVO) {
+	//
+	//		int cnt = this.userService.updateUser(userVO);
+	//
+	//		if (cnt == 0) {
+	//			log.info("실패!!");
+	//		}
+	//
+	//		return "redirect:/cmmn/user/userDetail.do?userId=" + userVO.getUserId();
+	//	}
 
 	// 사용자 삭제
 	@PostMapping("/cmmn/user/userDelete.do")

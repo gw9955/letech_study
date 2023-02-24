@@ -22,9 +22,9 @@ public class UserVO {
 	private String delYn;			// 삭제여부
 	private MultipartFile[] files;
 
-	private List<FileVO> fleVOList;
+	private List<FileVO> fileVOList;
 
 	public UserVO() {
-		this.fleVOList = new ArrayList<>();
+		this.fileVOList = new ArrayList<>();
 	}
 }

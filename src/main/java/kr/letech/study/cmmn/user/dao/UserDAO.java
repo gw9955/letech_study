@@ -17,6 +17,9 @@ public interface UserDAO {
 	// 사용자 상세
 	UserVO selectUserDetail(String userId);
 
+	// 사용자 첨부파일
+	List<FileVO> selectUserFileList(String userId);
+
 	// 사용자 등록
 	int insertUser(UserVO userVO);
 
@@ -24,7 +27,7 @@ public interface UserDAO {
 	int insertUpload(FileVO fileVO);
 
 	// 사용자 수정
-	int updateUser(UserVO userVO);
+	//	int updateUser(UserVO userVO);
 
 	// 사용자 삭제
 	int deleteUser(UserVO userVO);

@@ -15,13 +15,10 @@ public interface UserService {
 	UserVO selectUserDetail(String userId);
 
 	// 사용자 등록
-	int insertUser(UserVO userVO);
-
-	// 첨부파일 등록
-	int insertUpload(UserVO userVO) throws IOException;
+	int insertUser(UserVO userVO) throws IOException;
 
 	// 사용자 수정
-	int updateUser(UserVO userVO);
+	//	int updateUser(UserVO userVO);
 
 	// 사용자 삭제
 	int deleteUser(UserVO userVO);
