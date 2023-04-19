@@ -27,4 +27,5 @@ public class UserVO {
 	public UserVO() {
 		this.fileVOList = new ArrayList<>();
 	}
+
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.letech.study.cmmn.sec.dao.CustomUserDetailsDAO">
+	<select id="selectUser" resultType="kr.letech.study.cmmn.user.vo.UserVO">
+		/* kr.letech.study.cmmn.sec.dao.CustomUserDetailsDAO.selectUser */
+		SELECT USER_ID		AS userId
+		  	 , USER_PW      AS userPw
+		  	 , USER_NM      AS userNm
+	  	  FROM TB_USER
+	  	 WHERE USER_ID = #{userId}
+	</select>
+
+	<select id="selectUserAuthList" resultType="String">
+		/* kr.letech.study.cmmn.sec.dao.CustomUserDetailsDAO.selectUserAuthList */
+		SELECT USER_AUTH
+	  	  FROM TB_USER_AUTH
+	  	 WHERE USER_ID = #{userId}
+	</select>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.letech.study.cmmn.notice.dao.NoticeDAO">
+
+	<select id="selectNoticeList" resultType="kr.letech.study.cmmn.notice.vo.NoticeVO">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.selectNoticeList */
+		SELECT A.NTC_CTG													AS ntcCtg
+		  	 , B.USER_NM    	  											AS userNm
+		  	 , A.NTC_TTL													AS ntcTtl
+		  	 , A.NTC_CON													AS ntcCon
+		  	 , A.NTC_HT														AS ntcHt
+		  	 , A.RGST_ID													AS rgstId
+			 , DATE_FORMAT(A.RGST_DT, '%Y-%m-%d %H:%i:%s')					AS rgstDt
+		  FROM TB_NOTICE A
+		 INNER JOIN TB_USER B
+		    ON A.USER_ID = B.USER_ID
+		 WHERE B.DEL_YN = 'N'
+	</select>
+
+
+
+</mapper>

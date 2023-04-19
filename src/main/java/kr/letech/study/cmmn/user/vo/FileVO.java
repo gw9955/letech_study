@@ -1,5 +1,7 @@
 package kr.letech.study.cmmn.user.vo;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,4 +19,5 @@ public class FileVO {
 	private String updtId;			// 수정 ID
 	private String updtDt;			// 수정 일시
 	private String delYn;			// 삭제 여부
+	private MultipartFile file;
 }

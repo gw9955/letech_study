@@ -23,7 +23,7 @@
 			password-parameter="userPw"
 			login-processing-url="/cmmn/sec/loginProc.do"
 			login-page="/cmmn/sec/loginForm.do"
-			default-target-url="/"
+			default-target-url="/cmmn/notice/noticeList.do"
 			authentication-failure-handler-ref="userLoginFailHandler"
 			authentication-success-handler-ref="userLoginSuccessHandler" />
 

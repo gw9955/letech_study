@@ -45,12 +45,24 @@ public class UserServiceImpl implements UserService {
 	// 사용자 상세
 	@Override
 	public UserVO selectUserDetail(String userId) {
+		UserVO userVO = this.userDAO.selectUserDetail(userId);
+		List<FileVO> fileVOList = this.userDAO.selectUserFileList(userId);
+		userVO.setFileVOList(fileVOList);
 
-		UserVO user = this.userDAO.selectUserDetail(userId);
-		List<FileVO> fileList = this.userDAO.selectUserFileList(userId);
-		user.setFileVOList(fileList);
-		return user;
+		return userVO;
 	}
+
+	//	@Override
+	//	public List<FileVO> selectUserFileList(String userId) {
+	//		return this.userDAO.selectUserFileList(userId);
+	//	}
+
+	// 첨부파일 다운로드
+	@Override
+	public FileVO selectUserFile(FileVO fileVO) {
+		return this.userDAO.selectUserFile(fileVO);
+	}
+
 
 	// 사용자 등록
 	@Override
@@ -59,9 +71,10 @@ public class UserServiceImpl implements UserService {
 		String convUserPw = this.passwordEncoder.encode(userPw);
 		userVO.setUserPw(convUserPw);
 
-		OutputStream out = null;
+		OutputStream ous = null;
 		MultipartFile[] files = userVO.getFiles();
 		String fileGrpId = UUID.randomUUID().toString();
+		FileVO fileVO = new FileVO(); // UserFileVO 객체 생성
 
 		for (MultipartFile file : files) {
 
@@ -78,14 +91,14 @@ public class UserServiceImpl implements UserService {
 
 				String filePath = saveDir + convFileNm;
 
-				out = new FileOutputStream(filePath);
+				ous = new FileOutputStream(filePath);
 
-				IOUtils.copy(in, out);
+				IOUtils.copy(in, ous);
+				file.transferTo(saveFile); // 이렇게도 가능하다 output 필요 x
 
-				FileVO fileVO = new FileVO(); // UserFileVO 객체 생성
 				userVO.setPhtFileGrpId(fileGrpId);
 				fileVO.setFileGrpId(fileGrpId);
-				fileVO.setConvFileNm(convFileNm);
+				fileVO.setConvFileNm(filePath);
 				fileVO.setOrgnFileNm(file.getOriginalFilename());
 				fileVO.setFileSize(file.getSize());
 				//				fileVO.setFileDiv(file.get);
@@ -100,7 +113,7 @@ public class UserServiceImpl implements UserService {
 			} catch (IOException e) {
 				throw e;
 			} finally {
-				IOUtils.closeQuietly(out);
+				IOUtils.closeQuietly(ous);
 			}
 		}
 
@@ -108,13 +121,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	// 사용자 수정
-	//	@Override
-	//	public int updateUser(UserVO userVO) {
-	//		String userPw = userVO.getUserPw();
-	//		String convUserPw = this.passwordEncoder.encode(userPw);
-	//		userVO.setUserPw(convUserPw);
-	//		return this.userDAO.updateUser(userVO);
-	//	}
+	@Override
+	public int updateUser(UserVO userVO) {
+		String userPw = userVO.getUserPw();
+		String convUserPw = this.passwordEncoder.encode(userPw);
+		userVO.setUserPw(convUserPw);
+		return this.userDAO.updateUser(userVO);
+	}
 
 	// 사용자 삭제
 	@Override

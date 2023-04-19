@@ -50,7 +50,7 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
 		// 디폴트 URI
-		String uri = "/";
+		String uri = "/cmmn/notice/noticeList.do";
 
 		/* 강제 인터셉트 당했을 경우의 데이터 get */
 		RequestCache requestCache = new HttpSessionRequestCache();

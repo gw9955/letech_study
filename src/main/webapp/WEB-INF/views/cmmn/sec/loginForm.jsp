@@ -1,35 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<script type="text/javascript">
-	if ('${loginFailMag}'.trim() !== '') {
-		alert('${loginFailMag}');
-	}
-
-	function isEmpty(str) {
-		return str == null || str.trim() === '';
-	}
-
-	function fn_login() {
-		var idDom = document.getElementById('userId');
-		var pwDom = document.getElementById('userPw');
-
-		if (isEmpty(idDom.value)) {
-			alert('아이디를 입력 하세요.');
-			idDom.focus;
-			return;
-		}
-
-		if (isEmpty(pwDom.value)) {
-			alert('비밀번호를 입력 하세요.');
-			pwDom.focus;
-			return;
-		}
-
-		document.getElementById('frm').submit();
-	}
-</script>
-
 <form id="frm" action="${CPATH}/cmmn/sec/loginProc.do" method="post">
 	<table>
 		<caption>로그인(ID, 비밀번호)</caption>
@@ -59,3 +30,36 @@
 		</tfoot>
 	</table>
 </form>
+
+<html>
+
+<script type="text/javascript">
+	if ('${loginFailMag}'.trim() !== '') {
+		alert('${loginFailMag}');
+	}
+
+	function isEmpty(str) {
+		return str == null || str.trim() === '';
+	}
+
+	function fn_login() {
+		var idDom = document.getElementById('userId');
+		var pwDom = document.getElementById('userPw');
+
+		if (isEmpty(idDom.value)) {
+			alert('아이디를 입력 하세요.');
+			idDom.focus;
+			return;
+		}
+
+		if (isEmpty(pwDom.value)) {
+			alert('비밀번호를 입력 하세요.');
+			pwDom.focus;
+			return;
+		}
+
+		document.getElementById('frm').submit();
+	}
+</script>
+
+</html>

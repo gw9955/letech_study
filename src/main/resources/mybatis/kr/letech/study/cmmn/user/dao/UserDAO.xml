@@ -4,10 +4,18 @@
 <mapper namespace="kr.letech.study.cmmn.user.dao.UserDAO">
 	<select id="selectUserList" resultType="kr.letech.study.cmmn.user.vo.UserVO">
 		/* kr.letech.study.cmmn.user.dao.UserDAO.selectUserList */
-		SELECT USER_ID		AS userId
-		  	 , USER_NM      AS userNm
+		SELECT USER_ID										AS userId
+		  	 , USER_NM      								AS userNm
+		  	 , RGST_ID										AS rgstId
+			 , DATE_FORMAT(RGST_DT, '%Y-%m-%d %H:%i:%s')	AS rgstDt
 	  	  FROM TB_USER
 	  	 WHERE DEL_YN = 'N'
+		   <if test='userId != null and !"".equals(userId)'>
+		   AND USER_ID LIKE CONCAT('%', #{userId}, '%')
+		   </if>
+		   <if test='userNm != null and !"".equals(userNm)'>
+		   AND USER_NM LIKE CONCAT('%', #{userNm}, '%')
+		   </if>
 	</select>
 
 	<select id="selectUserDetail" resultType="kr.letech.study.cmmn.user.vo.UserVO">
@@ -28,11 +36,26 @@
 	    SELECT FILE_GRP_ID												AS fileGrpId
 		     , ORGN_FILE_NM												AS orgnFileNm
 		     , CONV_FILE_NM												AS convFileNm
-		     , FILE_SIZE													AS fileSize
+		     , FILE_SIZE												AS fileSize
+		     , FILE_NO													AS fileNo
 		  FROM TB_CMMN_FILE A
 		 INNER JOIN TB_USER B
 		    ON A.FILE_GRP_ID = B.PHT_FILE_GRP_ID
 		 WHERE B.USER_ID = #{userId}
+	</select>
+
+	<select id="selectUserFile" resultType="kr.letech.study.cmmn.user.vo.FileVO">
+	    /* kr.letech.study.cmmn.user.dao.UserDAO.selectUserFileList */
+	    SELECT FILE_GRP_ID												AS fileGrpId
+		     , ORGN_FILE_NM												AS orgnFileNm
+		     , CONV_FILE_NM												AS convFileNm
+		     , FILE_SIZE												AS fileSize
+		     , FILE_NO													AS fileNo
+		  FROM TB_CMMN_FILE A
+<!-- 		 INNER JOIN TB_USER B -->
+<!-- 		    ON A.FILE_GRP_ID = B.PHT_FILE_GRP_ID -->
+		 WHERE A.FILE_GRP_ID = #{fileGrpId}
+		   AND A.FILE_NO = #{fileNo}
 	</select>
 
 	<insert id="insertUser">

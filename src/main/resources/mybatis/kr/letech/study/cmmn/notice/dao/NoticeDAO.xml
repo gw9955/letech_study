@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="kr.letech.study.cmmn.notice.dao.NoticeDAO">
+
+	<select id="selectNoticeList" resultType="kr.letech.study.cmmn.notice.vo.NoticeVO">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.selectNoticeList */
+		SELECT A.NTC_CTG													AS ntcCtg
+<!-- 		  	 , B.USER_NM    	  											AS userNm -->
+			 , A.NTC_NO														AS ntcNo
+		  	 , A.NTC_TTL													AS ntcTtl
+		  	 , A.NTC_CON													AS ntcCon
+		  	 , A.NTC_HT														AS ntcHt
+		  	 , A.RGST_ID													AS rgstId
+			 , DATE_FORMAT(A.RGST_DT, '%Y-%m-%d %H:%i:%s')					AS rgstDt
+		  FROM TB_NOTICE A
+<!-- 		 INNER JOIN TB_USER B -->
+<!-- 		    ON A.USER_ID = B.USER_ID -->
+		 WHERE A.DEL_YN = 'N'
+	        <if test='ntcTtl != null and !"".equals(ntcTtl)'>
+	            AND NTC_TTL LIKE CONCAT('%', #{ntcTtl}, '%')
+	        </if>
+	     ORDER BY A.RGST_DT DESC
+	     LIMIT #{pageSize} OFFSET #{startRow}
+	</select>
+
+	<select id="selectNoticeListCount" resultType="int">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.selectNoticeListCount */
+		SELECT COUNT(*)
+		  FROM TB_NOTICE
+		 WHERE DEL_YN = 'N'
+		 <if test='ntcTtl != null and !"".equals(ntcTtl)'>
+           AND NTC_TTL LIKE CONCAT('%', #{ntcTtl}, '%')
+    	 </if>
+	</select>
+
+	<select id="selectNoticeDetail" resultType="kr.letech.study.cmmn.notice.vo.NoticeVO">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.selectNoticeDetail */
+		SELECT NTC_CTG													AS ntcCtg
+			 , NTC_NO													AS ntcNo
+		 	 , NTC_TTL													AS ntcTtl
+		 	 , NTC_CON													AS ntcCon
+		 	 , NTC_HT													AS ntcHt
+		 	 , RGST_ID													AS rgstId
+			 , DATE_FORMAT(RGST_DT, '%Y-%m-%d %H:%i:%s')				AS rgstDt
+		  	 , UPDT_ID													AS updtId
+		  	 , DATE_FORMAT(UPDT_DT , '%Y-%m-%d %H:%i:%S' )				AS updtDt
+		  FROM TB_NOTICE
+		 WHERE NTC_NO = #{ntcNo}
+		   AND DEL_YN = 'N'
+	</select>
+
+	<select id="selectNoticeFileList" resultType="kr.letech.study.cmmn.user.vo.FileVO">
+	    /* kr.letech.study.cmmn.notice.dao.NoticeDAO.selectNoticeFileList */
+	    SELECT A.FILE_GRP_ID												AS fileGrpId
+		     , A.ORGN_FILE_NM												AS orgnFileNm
+		     , A.CONV_FILE_NM												AS convFileNm
+		     , A.FILE_SIZE													AS fileSize
+		     , A.FILE_NO													AS fileNo
+		  FROM TB_CMMN_FILE A
+		 INNER JOIN TB_NOTICE B
+		    ON A.FILE_GRP_ID = B.PHT_FILE_GRP_ID
+		 WHERE B.NTC_NO = #{ntcNo}
+		   AND A.DEL_YN  = 'N'
+	</select>
+
+	<select id="selectNoticeFile" resultType="kr.letech.study.cmmn.user.vo.FileVO">
+	    /* kr.letech.study.cmmn.notice.dao.NoticeDAO.selectNoticeFile */
+	    SELECT FILE_GRP_ID												AS fileGrpId
+		     , ORGN_FILE_NM												AS orgnFileNm
+		     , CONV_FILE_NM												AS convFileNm
+		     , FILE_SIZE												AS fileSize
+		     , FILE_NO													AS fileNo
+		  FROM TB_CMMN_FILE
+		 WHERE FILE_GRP_ID = #{fileGrpId}
+		   AND FILE_NO = #{fileNo}
+	</select>
+
+	<insert id="insertNotice">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.insertNotice */
+		<selectKey order="BEFORE" keyProperty="ntcNo"
+				resultType="int">
+			SELECT IFNULL(MAX(NTC_NO) ,0)+1
+    		  FROM TB_NOTICE
+		</selectKey>
+		INSERT INTO TB_NOTICE
+		     (
+		       NTC_NO
+			 , NTC_CTG
+<!-- 			 , USER_ID -->
+			 , NTC_TTL
+			 , NTC_CON
+			 , NTC_HT
+			 , PHT_FILE_GRP_ID
+			 , RGST_ID
+			 , RGST_DT
+			 , UPDT_ID
+			 , UPDT_DT
+			 , DEL_YN
+		     )
+		       VALUES
+		     (
+		       #{ntcNo}
+			 , #{ntcCtg}
+<!-- 			 , #{userId} -->
+			 , #{ntcTtl}
+			 , #{ntcCon}
+			 , #{ntcHt}
+			 , #{phtFileGrpId}
+			 , #{rgstId}
+			 , NOW()
+			 , #{updtId}
+			 , NOW()
+			 , 'N'
+		     )
+	</insert>
+
+	<insert id="insertUpload">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.insertUser */
+		<selectKey order="BEFORE" keyProperty="fileNo"
+				resultType="int">
+			SELECT IFNULL(MAX(FILE_NO) ,0)+1
+    		  FROM TB_CMMN_FILE
+		</selectKey>
+		INSERT INTO TB_CMMN_FILE
+		     (
+		       FILE_GRP_ID
+			 , FILE_NO
+			 , ORGN_FILE_NM
+			 , CONV_FILE_NM
+			 , FILE_SIZE
+			 , FILE_DIV
+			 , RGST_ID
+			 , RGST_DT
+			 , UPDT_ID
+			 , UPDT_DT
+			 , DEL_YN
+		     )
+		       VALUES
+		     (
+		       #{fileGrpId}
+			 , #{fileNo}
+			 , #{orgnFileNm}
+			 , #{convFileNm}
+			 , #{fileSize}
+			 , #{fileDiv}
+			 , #{rgstId}
+			 , NOW()
+			 , #{updtId}
+			 , NOW()
+			 , 'N'
+		     )
+	</insert>
+
+	<update id="updateNotice">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.updateNotice */
+		UPDATE TB_NOTICE
+		   SET NTC_CTG = #{ntcCtg}
+		     , NTC_TTL = #{ntcTtl}
+		     , NTC_CON = #{ntcCon}
+		     , UPDT_ID = #{updtId}
+			 , UPDT_DT = NOW()
+		 WHERE NTC_NO = #{ntcNo}
+	</update>
+
+	<update id="deleteNotice">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.deleteNotice */
+		UPDATE TB_NOTICE
+		   SET DEL_YN  = 'Y'
+		     , UPDT_ID = #{updtId}
+			 , UPDT_DT = NOW()
+		 WHERE NTC_NO = #{ntcNo}
+	</update>
+
+	<!-- 첨부파일 단건 삭제 -->
+	<update id="deleteFile">
+		/* kr.letech.study.cmmn.notice.dao.NoticeDAO.deleteFile */
+		UPDATE TB_CMMN_FILE
+		   SET UPDT_DT		= NOW()
+			 , DEL_YN		= 'Y'
+		 WHERE FILE_GRP_ID	= #{fileGrpId}
+		   AND FILE_NO		= #{fileNo}
+	</update>
+
+</mapper>
